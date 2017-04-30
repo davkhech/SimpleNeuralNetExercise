@@ -25,7 +25,6 @@ def test(network, num_data=10000):
         out_v = network.forward_propagate(img.reshape(-1))
         errors += 0 if np.argmax(out_v) == true_label else 1
         print(i, '{:.2f}% error rate'.format(100. * errors / i))
-        # print('{:.2f}% error rate'.format(100. * errors / len(test_data)))
 
 
 def show_10_neurons(network):
@@ -108,25 +107,22 @@ if __name__ == '__main__':
                                 (rows, columns))
                      for _ in range(10000)]
 
-    vector_data = [img.reshape(-1) for img in all_data]
+    vector_data = np.array([img.reshape(-1) for img in all_data])
 
-    vector_labels = [np.zeros(10) for _ in all_labels]
+    vector_labels = np.array([np.zeros(10) for _ in all_labels])
     for v, y in zip(vector_labels, all_labels):
         v[y] = 1
 
     one_layer_network = NeuralNetwork(784, 10)
-    # print(vector_data[:1])
-    # print(vector_labels[:1])
-    # print(len(vector_data))
-    N = 100
+    # N = 100
 
     """You can edit the training_set_size to get better faster computation times
     when you are just trying different things. You can also change max_iter below to 
     make the program go through the data more than one time. This can decrease your 
     error"""
-    training_set_size = 6000
+    training_set_size = 600
     one_layer_network.train(vector_data[:training_set_size],
-                            vector_labels[0:training_set_size], max_iter=1)
+                            vector_labels[:training_set_size], max_iter=1)
 
     # print(all_labels[-1], one_layer_network.forward_propagate(vector_data[-1]))
 

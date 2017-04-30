@@ -1,18 +1,24 @@
+from neuron import Neuron
+
+
 class NeuralNetwork(object):
     def __init__(self, n_features, *neurons_per_layer):
         """
         param n_features: integer, number of features of the input
-        param *neurons_per_layer: arbitrary number of parameters. The len(*neurons_per_layer) will be 
+        param *neurons_per_layer: arbitrary number of parameters. The len(neurons_per_layer) will be
             the number of hidden layers in the network. Each number here shows the number of neurons in 
             that layer
 
         __init__ should set self.layers into a two dimensional list, corresponding to the structure of 
             *neurons_per_layer, and should initialize each element in this list to an object of class 
-            Neuron with correct number of inputs. The n_features going into the neuron should be n_features if the Neuron is in the first
-            layer, or should be the length of the previous layer otherwise.
+            Neuron with correct number of inputs. The n_features going into the neuron should be n_features
+            if the Neuron is in the first layer, or should be the length of the previous layer otherwise.
         """
+        self.layers = []
+        for i in range(len(neurons_per_layer)):
+            n_inputs = n_features if i == 0 else neurons_per_layer[i - 1]
+            self.layers.append([Neuron(n_inputs) for _ in range(neurons_per_layer[i])])
 
-        # Latest output
         self.output = None
 
     def forward_propagate(self, features):
