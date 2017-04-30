@@ -54,19 +54,19 @@ def _10_neurons(network, show=False, savefig=None):
 def parse_args(*argument_array):
     parser = argparse.ArgumentParser()
     parser.add_argument('--mnist-train-data',
-                        default='train-images-idx3-ubyte.gz',  # noqa
+                        default='../train-images-idx3-ubyte.gz',  # noqa
                         help='Path to train-images-idx3-ubyte.gz file '
                              'downloaded from http://yann.lecun.com/exdb/mnist/')
     parser.add_argument('--mnist-train-labels',
-                        default='train-labels-idx1-ubyte.gz',  # noqa
+                        default='../train-labels-idx1-ubyte.gz',  # noqa
                         help='Path to train-labels-idx1-ubyte.gz file '
                              'downloaded from http://yann.lecun.com/exdb/mnist/')
     parser.add_argument('--mnist-test-data',
-                        default='t10k-images-idx3-ubyte.gz',
+                        default='../t10k-images-idx3-ubyte.gz',
                         help='Path to t10k-images-idx3-ubyte.gz file '
                              'downloaded from http://yann.lecun.com/exdb/mnist/')  # noqa
     parser.add_argument('--mnist-test-labels',
-                        default='t10k-labels-idx1-ubyte.gz',
+                        default='../t10k-labels-idx1-ubyte.gz',
                         help='Path to t10k-labels-idx1-ubyte.gz file '
                              'downloaded from http://yann.lecun.com/exdb/mnist/')
     parser.add_argument('--positive-label', type=int, choices=list(range(10)),
