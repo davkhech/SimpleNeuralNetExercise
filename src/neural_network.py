@@ -1,7 +1,9 @@
+import numpy as np
 from neuron import Neuron
 
 
 class NeuralNetwork(object):
+
     def __init__(self, n_features, *neurons_per_layer):
         """
         param n_features: integer, number of features of the input
@@ -19,6 +21,8 @@ class NeuralNetwork(object):
             n_inputs = n_features if i == 0 else neurons_per_layer[i - 1]
             self.layers.append([Neuron(n_inputs) for _ in range(neurons_per_layer[i])])
 
+        self.n_features = n_features
+        self.neurons_per_layer = neurons_per_layer
         self.output = None
 
     def forward_propagate(self, features):
@@ -31,6 +35,11 @@ class NeuralNetwork(object):
         to finally compute and return the output.
 
         """
+        out = features
+        for layer in self.layers:
+            out = [neuron.forward_propagate(out) for neuron in layer]
+        self.output = out
+        return out
 
     def backward_propagate(self, correct_output_vector):
         """
@@ -41,7 +50,7 @@ class NeuralNetwork(object):
         backward_propagate takes the correct output, calculates the error and propagates that error,
             from the back of the neural net to the front. To do this, you can pass the net from back to 
             front, layer by layer. For each layer, for i-th Neuron of the layer you call
-            .feed_backwards(error[i]), where error is the list of errors coming from the precious
+            .feed_backwards(error[i]), where error is the list of errors coming from the previous
             layer. If you are on the last layer error is simply the difference of the correct_output
             and the output given by the current state of the neural net (you calculate this in forward
             propagate).
@@ -53,8 +62,15 @@ class NeuralNetwork(object):
             .feed_backwards() )
             When you call update_weights, this will use those data to finally update the weights.
         """
-        out_error = [out - true for true, out in zip(correct_output_vector,
-                                                     self.output)]
+        out_error = np.array([out - true for true, out in zip(correct_output_vector,
+                                                     self.output)])
+        error = out_error
+        for i in range(len(self.neurons_per_layer) - 1, -1, -1):
+            t = np.zeros(len(self.layers[i - 1])) if i > 0 else np.zeros(self.n_features)
+            for j in range(len(self.layers[i])):
+                ret = self.layers[i][j].feed_backwards(error[j])
+                t = t + ret
+            error = t
 
     def update_weights(self, learning_rate):
         """
@@ -62,6 +78,9 @@ class NeuralNetwork(object):
 
         for each of the neuron in layers[], call .update_weights(learning_rate)
         """
+        for layer in self.layers:
+            for neuron in layer:
+                neuron.update_weights(learning_rate)
 
     def train(self, X, Y, learning_rate=1e-7, max_iter=1):
         """
@@ -70,3 +89,8 @@ class NeuralNetwork(object):
         param max_iter: integer, number of times ALL data is iterated. In other words,
         how many times we will use the same image to update weights.
         """
+        for k in range(max_iter):
+            for i in range(len(X)):
+                self.forward_propagate(X[i])
+                self.backward_propagate(Y[i])
+                self.update_weights(learning_rate)

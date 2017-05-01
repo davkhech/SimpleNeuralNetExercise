@@ -5,6 +5,7 @@ import struct
 import matplotlib.pyplot as plt
 import numpy as np
 
+from time import time
 from neural_network import NeuralNetwork
 
 """
@@ -113,19 +114,16 @@ if __name__ == '__main__':
     for v, y in zip(vector_labels, all_labels):
         v[y] = 1
 
-    one_layer_network = NeuralNetwork(784, 10)
-    # N = 100
+    tStart = time()
+    network = NeuralNetwork(784, 60, 30, 10)
 
-    """You can edit the training_set_size to get better faster computation times
-    when you are just trying different things. You can also change max_iter below to 
-    make the program go through the data more than one time. This can decrease your 
-    error"""
-    training_set_size = 600
-    one_layer_network.train(vector_data[:training_set_size],
+    print 'Training started at', tStart
+    training_set_size = 6000
+    network.train(vector_data[:training_set_size],
                             vector_labels[:training_set_size], max_iter=1)
 
-    # print(all_labels[-1], one_layer_network.forward_propagate(vector_data[-1]))
+    print 'Training finished at', time()
+    print 'It took ', time() - tStart
 
-    test(one_layer_network)
-    # Plot 10 neuron weights.
-    save_10_neurons(one_layer_network, path="pic")
+    test(network)
+    # save_10_neurons(network, path="pic")

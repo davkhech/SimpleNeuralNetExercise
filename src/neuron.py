@@ -32,6 +32,7 @@ class Neuron(object):
         param transfer_function: in our case this is the sigmoid function.
         transfer_function_derivative: in our case, this is the derivative of the sigmoid.
         """
+        self.n_inputs = n_inputs
         self.transfer_function = transfer_function
         if weights is None:
             self.weights = [1e-5 * random.random()
@@ -57,7 +58,7 @@ class Neuron(object):
         """
         weighted_sum = self.weights[0]
         for i in range(1, len(self.weights)):
-            weighted_sum += self.weights[i] * self.inputs[i - 1]
+            weighted_sum += self.weights[i] * inputs[i - 1]
         self.weighted_sum = weighted_sum
         self.output = self.transfer_function(weighted_sum)
         self.inputs = inputs
@@ -70,9 +71,10 @@ class Neuron(object):
         feed_backwards also computes and saves self.delta for future use.
         """
         self.delta = self.derivative_function(self.weighted_sum) * error
-        errors = []
+        errors = np.zeros(self.n_inputs)
         for i in range(1, len(self.weights)):
             errors[i - 1] = self.derivative_function(error) - self.weights[i] * self.inputs[i - 1]
+        return errors
 
     def update_weights(self, learning_rate):
         """
