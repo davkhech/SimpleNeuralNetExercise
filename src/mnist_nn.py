@@ -1,11 +1,12 @@
 import argparse
 import gzip
 import struct
+import logging
+from time import time
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from time import time
 from neural_network import NeuralNetwork
 
 """
@@ -25,7 +26,9 @@ def test(network, num_data=10000):
         i += 1
         out_v = network.forward_propagate(img.reshape(-1))
         errors += 0 if np.argmax(out_v) == true_label else 1
-        print(i, '{:.2f}% error rate'.format(100. * errors / i))
+        logging.info(i, '{:.2f}% error rate'.format(100. * errors / i))
+    with open('output', 'w') as f:
+        f.write('{:.2f}% error rate'.format(100. * errors / i))
 
 
 def show_10_neurons(network):
@@ -82,6 +85,8 @@ def parse_args(*argument_array):
 if __name__ == '__main__':
     args = parse_args()
 
+    logging.basicConfig(level=logging.DEBUG, filename="neural_net.log", filemode="a+",
+                        format="%(asctime)-15s %(message)s")
     # Read labels file into labels
     with gzip.open(args.mnist_train_labels, 'rb') as in_gzip:
         magic, num = struct.unpack('>II', in_gzip.read(8))
@@ -115,15 +120,16 @@ if __name__ == '__main__':
         v[y] = 1
 
     tStart = time()
-    network = NeuralNetwork(784, 60, 30, 10)
-
-    print 'Training started at', tStart
-    training_set_size = 6000
+    network = NeuralNetwork(784, 250, 50, 10)
+    logging.info('Training started at {:.2f}'.format(tStart))
+    training_set_size = 60000
     network.train(vector_data[:training_set_size],
-                            vector_labels[:training_set_size], max_iter=1)
+                  vector_labels[:training_set_size],
+                  max_iter=2,
+                  logging=logging)
 
-    print 'Training finished at', time()
-    print 'It took ', time() - tStart
+    logging.info('Training finished at {:.2f}'.format(time()))
+    logging.info('It took {:.2f} seconds'.format(time() - tStart))
 
     test(network)
     # save_10_neurons(network, path="pic")

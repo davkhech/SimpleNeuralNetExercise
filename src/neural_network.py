@@ -82,7 +82,7 @@ class NeuralNetwork(object):
             for neuron in layer:
                 neuron.update_weights(learning_rate)
 
-    def train(self, X, Y, learning_rate=1e-7, max_iter=1):
+    def train(self, X, Y, learning_rate=1e-7, max_iter=1, logging=None):
         """
         param X, Y:
         param learning_rate: float
@@ -90,7 +90,9 @@ class NeuralNetwork(object):
         how many times we will use the same image to update weights.
         """
         for k in range(max_iter):
+            logging.info('Training epoch %d' % k)
             for i in range(len(X)):
+                logging.info('Epoch: %d, training example: %d' % (k, i))
                 self.forward_propagate(X[i])
                 self.backward_propagate(Y[i])
                 self.update_weights(learning_rate)
